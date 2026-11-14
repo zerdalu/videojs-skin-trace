@@ -1,0 +1,671 @@
+@layer base.theme, base.preset, base.preferences;
+
+@layer base.preset {
+  .media-skin[data-theme="storybook"]:not([data-theme="neutral"]) {
+    /* Storybook Typography & Warm Paper Colors (Light fallback for older browsers) */
+    --media-font-family: "Fredoka", "Nunito", ui-rounded, "Comic Sans MS", cursive, sans-serif;
+    --media-background: #fdf6e9;
+    --media-foreground: #38281a;
+    --media-controls: rgb(253 246 233 / 0.94);
+    --media-controls-foreground: #38281a;
+    --media-popover: #fffdf7;
+    --media-popover-foreground: #38281a;
+    --media-primary: #78350f;
+    --media-primary-foreground: #ffffff;
+    --media-accent: #f4e8d0;
+    --media-accent-foreground: #38281a;
+    --media-muted: #eadbbe;
+    --media-muted-foreground: #5c4a36;
+    --media-border: #bca888;
+    --media-frame-border: #805d35;
+    --media-ring: #78350f;
+    --media-backdrop: #20170e;
+    --media-text-shadow: 0 1px 0 rgb(255 255 255 / 0.7);
+    --storybook-vine-top: #ead7be;
+    --storybook-vine-bottom: #d8c0a0;
+    --storybook-vine-border: #6e4e28;
+
+    /* Kid-Friendly Chunky Control Metrics */
+    --media-control-size: 2.75rem;
+    --media-control-radius: 9999px;
+    --media-controls-radius: 1.5rem;
+    --media-video-border-radius: 24px;
+
+    /* Soft Tactile Book Shadows */
+    --media-shadow-surface:
+      0 4px 14px -2px rgba(80, 50, 20, 0.18), 0 2px 6px -1px rgba(80, 50, 20, 0.12);
+    --media-shadow-thumb: 0 3px 6px rgba(80, 40, 15, 0.25);
+    --media-shadow-tooltip: 0 2px 8px rgba(80, 50, 20, 0.2);
+
+    /* Durations */
+    --media-duration-fast: 150ms;
+    --media-duration: 250ms;
+  }
+
+  /* Bedtime field journal / night adventure palette (OS dark fallback) */
+  @media (prefers-color-scheme: dark) {
+    .media-skin[data-theme="storybook"]:not([data-theme="neutral"]):not(
+        [data-color-scheme="light"]
+      ) {
+      --media-background: #1c1611;
+      --media-foreground: #f7ede1;
+      --media-controls: rgb(28 22 17 / 0.94);
+      --media-controls-foreground: #f7ede1;
+      --media-popover: #272019;
+      --media-popover-foreground: #f7ede1;
+      --media-primary: #f59e0b;
+      --media-primary-foreground: #1c1611;
+      --media-accent: #3d3227;
+      --media-accent-foreground: #f7ede1;
+      --media-muted: #382d23;
+      --media-muted-foreground: #cdbda8;
+      --media-border: #524334;
+      --media-frame-border: #996e3d;
+      --media-ring: #fbbf24;
+      --media-backdrop: #0c0907;
+      --media-text-shadow: 0 1px 0 rgb(0 0 0 / 0.55);
+      --storybook-vine-top: #3d3125;
+      --storybook-vine-bottom: #2e241a;
+      --storybook-vine-border: #996e3d;
+    }
+  }
+
+  :root[data-color-scheme="light"] .media-skin[data-theme="storybook"],
+  .media-skin[data-theme="storybook"][data-color-scheme="light"] {
+    color-scheme: light;
+  }
+
+  :root[data-color-scheme="dark"] .media-skin[data-theme="storybook"],
+  .media-skin[data-theme="storybook"][data-color-scheme="dark"] {
+    color-scheme: dark;
+    --media-background: #1c1611;
+    --media-foreground: #f7ede1;
+    --media-controls: rgb(28 22 17 / 0.94);
+    --media-controls-foreground: #f7ede1;
+    --media-popover: #272019;
+    --media-popover-foreground: #f7ede1;
+    --media-primary: #f59e0b;
+    --media-primary-foreground: #1c1611;
+    --media-accent: #3d3227;
+    --media-accent-foreground: #f7ede1;
+    --media-muted: #382d23;
+    --media-muted-foreground: #cdbda8;
+    --media-border: #524334;
+    --media-frame-border: #996e3d;
+    --media-ring: #fbbf24;
+    --media-backdrop: #0c0907;
+    --media-text-shadow: 0 1px 0 rgb(0 0 0 / 0.55);
+    --storybook-vine-top: #3d3125;
+    --storybook-vine-bottom: #2e241a;
+    --storybook-vine-border: #996e3d;
+  }
+
+  /* Dynamic `light-dark()` responds automatically to root `style.colorScheme`, `data-color-scheme`, and OS scheme */
+  @supports (color: light-dark(red, red)) {
+    .media-skin[data-theme="storybook"]:not([data-theme="neutral"]) {
+      --media-background: light-dark(#fdf6e9, #1c1611);
+      --media-foreground: light-dark(#38281a, #f7ede1);
+      --media-controls: light-dark(rgb(253 246 233 / 0.94), rgb(28 22 17 / 0.94));
+      --media-controls-foreground: light-dark(#38281a, #f7ede1);
+      --media-popover: light-dark(#fffdf7, #272019);
+      --media-popover-foreground: light-dark(#38281a, #f7ede1);
+      --media-primary: light-dark(#78350f, #f59e0b);
+      --media-primary-foreground: light-dark(#ffffff, #1c1611);
+      --media-accent: light-dark(#f4e8d0, #3d3227);
+      --media-accent-foreground: light-dark(#38281a, #f7ede1);
+      --media-muted: light-dark(#eadbbe, #382d23);
+      --media-muted-foreground: light-dark(#5c4a36, #cdbda8);
+      --media-border: light-dark(#bca888, #524334);
+      --media-frame-border: light-dark(#805d35, #996e3d);
+      --media-ring: light-dark(#78350f, #fbbf24);
+      --media-backdrop: light-dark(#20170e, #0c0907);
+      --media-text-shadow: light-dark(0 1px 0 rgb(255 255 255 / 0.7), 0 1px 0 rgb(0 0 0 / 0.55));
+      --storybook-vine-top: light-dark(#ead7be, #3d3125);
+      --storybook-vine-bottom: light-dark(#d8c0a0, #2e241a);
+      --storybook-vine-border: light-dark(#6e4e28, #996e3d);
+    }
+  }
+}
+
+/* Stitched Seam Utility for Children's Book Panels */
+.storybook-stitched-frame {
+  border: 3.5px solid var(--media-frame-border, #6e4e28);
+  border-radius: 24px;
+  position: relative;
+  background-color: var(--media-background, #faf2e3);
+  box-shadow:
+    inset 0 0 0 3px var(--media-background, #faf2e3),
+    inset 0 0 0 5px var(--media-border, #b4966e);
+}
+
+/* Hide scrollbars on horizontally scrollable mobile toolbars while preserving scrollability */
+.storybook-no-scrollbar {
+  scrollbar-width: none;
+}
+
+.storybook-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Top-Left Video Title Overlay Synced with Controls Visibility */
+.storybook-title-overlay {
+  opacity: 1;
+  filter: none;
+  translate: 0 0;
+  transition:
+    filter var(--media-duration-controls-enter, 150ms) ease-out,
+    opacity var(--media-duration-controls-enter, 150ms) ease-out,
+    translate var(--media-duration-controls-enter, 150ms) ease-out;
+}
+
+.media-skin:not([data-controls-visible]) .storybook-title-overlay {
+  opacity: 0;
+  translate: 0 calc(min(var(--media-hidden-offset, 4px), var(--media-control-size, 2.75rem)) * -1);
+  transition-duration: var(--media-duration-controls, 200ms);
+}
+
+@media (pointer: fine) {
+  .media-skin:not([data-controls-visible]) .storybook-title-overlay {
+    filter: blur(var(--media-hidden-blur, 8px));
+  }
+}
+
+/* Guaranteed Non-Jittering Tabular Numerals for Time & Counters */
+.storybook-tabular-nums {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Garden Trail Seek Track */
+.storybook-vine-track {
+  background: linear-gradient(
+    180deg,
+    var(--storybook-vine-top, #ead7be) 0%,
+    var(--storybook-vine-bottom, #d8c0a0) 100%
+  );
+  border: 1.5px solid var(--storybook-vine-border, #6e4e28);
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 3px rgba(80, 40, 10, 0.2);
+}
+
+/* Divided Chapter Segment Fills */
+.storybook-chapter-segment-buffer {
+  width: clamp(
+    0%,
+    calc((var(--media-slider-buffer, 0%) - var(--seg-start, 0%)) / var(--seg-ratio, 1)),
+    100%
+  );
+}
+
+.storybook-chapter-segment-fill {
+  --seg-fill: var(--media-slider-fill, 0%);
+  width: clamp(0%, calc((var(--seg-fill) - var(--seg-start, 0%)) / var(--seg-ratio, 1)), 100%);
+}
+
+.group\/slider[data-dragging] .storybook-chapter-segment-fill {
+  --seg-fill: var(--media-slider-pointer, var(--media-slider-fill, 0%));
+}
+
+/* Ladybug Seeker Animations */
+@keyframes ladybug-walk-waddle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2.5deg);
+  }
+  50% {
+    transform: translateY(-0.9px) rotate(2.5deg);
+  }
+}
+
+@keyframes ladybug-leg-swing-a {
+  0% {
+    transform: rotate(-16deg);
+  }
+  100% {
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes ladybug-leg-swing-b {
+  0% {
+    transform: rotate(16deg);
+  }
+  100% {
+    transform: rotate(-16deg);
+  }
+}
+
+@keyframes ladybug-antennae-walk {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes ladybug-look-head {
+  0%,
+  14%,
+  100% {
+    transform: rotate(0deg);
+  }
+  26%,
+  42% {
+    transform: rotate(-12deg);
+  }
+  56%,
+  72% {
+    transform: rotate(11deg);
+  }
+  84% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes ladybug-look-pupils {
+  0%,
+  14%,
+  100% {
+    transform: translate(0, 0);
+  }
+  26%,
+  42% {
+    transform: translate(0.45px, -0.85px);
+  }
+  56%,
+  72% {
+    transform: translate(0.45px, 0.85px);
+  }
+  84% {
+    transform: translate(-0.45px, -0.25px);
+  }
+}
+
+@keyframes ladybug-antennae-look {
+  0%,
+  18%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30%,
+  42% {
+    transform: rotate(-8deg);
+  }
+  60%,
+  72% {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes ladybug-wing-flutter {
+  0% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes ladybug-inner-wing-buzz {
+  0% {
+    transform: rotate(-7deg) scaleX(1);
+  }
+  100% {
+    transform: rotate(8deg) scaleX(0.95);
+  }
+}
+
+@keyframes ladybug-chapter-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  22%,
+  74% {
+    transform: translateY(-5.5px);
+  }
+}
+
+.ladybug-elytron-top,
+.ladybug-elytron-bottom,
+.ladybug-flight-wing-top,
+.ladybug-flight-wing-bottom {
+  transition:
+    transform 240ms cubic-bezier(0.34, 1.45, 0.64, 1),
+    opacity 180ms ease-out;
+}
+
+.ladybug-flight-wing-top,
+.ladybug-flight-wing-bottom {
+  opacity: 0;
+}
+
+/* Playing: walking along the vine */
+.ladybug-state-playing .ladybug-body-group {
+  animation: ladybug-walk-waddle 0.36s ease-in-out infinite;
+}
+
+.ladybug-state-playing .ladybug-leg-a {
+  animation: ladybug-leg-swing-a 0.18s ease-in-out infinite alternate;
+}
+
+.ladybug-state-playing .ladybug-leg-b {
+  animation: ladybug-leg-swing-b 0.18s ease-in-out infinite alternate;
+}
+
+.ladybug-state-playing .ladybug-antennae {
+  animation: ladybug-antennae-walk 0.36s ease-in-out infinite;
+}
+
+/* Paused: looking around curiously */
+.ladybug-state-paused .ladybug-head {
+  animation: ladybug-look-head 3.6s ease-in-out infinite;
+}
+
+.ladybug-state-paused .ladybug-pupils {
+  animation: ladybug-look-pupils 3.6s ease-in-out infinite;
+}
+
+.ladybug-state-paused .ladybug-antennae {
+  animation: ladybug-antennae-look 3.6s ease-in-out infinite;
+}
+
+/* Passing to next chapter: open wings and flutter across the gap */
+.ladybug-state-wings .ladybug-body-group {
+  animation: ladybug-chapter-hop 1.2s ease-in-out infinite;
+}
+
+.ladybug-state-wings .ladybug-elytron-top {
+  transform: rotate(52deg);
+}
+
+.ladybug-state-wings .ladybug-elytron-bottom {
+  transform: rotate(-52deg);
+}
+
+.ladybug-state-wings .ladybug-elytron-flutter {
+  animation: ladybug-wing-flutter 0.16s ease-in-out infinite alternate;
+}
+
+.ladybug-state-wings .ladybug-flight-wing-top {
+  opacity: 0.92;
+  transform: rotate(30deg);
+}
+
+.ladybug-state-wings .ladybug-flight-wing-bottom {
+  opacity: 0.92;
+  transform: rotate(-30deg);
+}
+
+.ladybug-state-wings .ladybug-flight-wing-buzz {
+  animation: ladybug-inner-wing-buzz 0.09s ease-in-out infinite alternate;
+}
+
+/* Songbird Volume Icon Animations */
+@keyframes songbird-sing-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  30% {
+    transform: translateY(-1.3px) rotate(-3deg);
+  }
+  65% {
+    transform: translateY(-0.4px) rotate(2deg);
+  }
+}
+
+@keyframes songbird-tail-wag {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(-9deg);
+  }
+  75% {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes songbird-wing-flutter {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  45% {
+    transform: rotate(-10deg) translateY(-0.5px);
+  }
+}
+
+@keyframes songbird-beak-top-chirp {
+  0%,
+  45%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20%,
+  70% {
+    transform: rotate(-11deg);
+  }
+}
+
+@keyframes songbird-beak-bottom-chirp {
+  0%,
+  45%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20%,
+  70% {
+    transform: rotate(13deg);
+  }
+}
+
+@keyframes songbird-note-float {
+  0% {
+    opacity: 0.25;
+    transform: translate(0, 1.5px) rotate(-5deg) scale(0.88);
+  }
+  35% {
+    opacity: 1;
+    transform: translate(1px, -1.5px) rotate(5deg) scale(1.04);
+  }
+  80% {
+    opacity: 0.85;
+    transform: translate(2px, -4.5px) rotate(-3deg) scale(0.98);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(2.5px, -6px) rotate(4deg) scale(0.84);
+  }
+}
+
+@keyframes songbird-sleep-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(0.5px) scaleY(0.96);
+  }
+}
+
+@keyframes songbird-zzz-float {
+  0% {
+    opacity: 0;
+    transform: translate(0, 2px) scale(0.75);
+  }
+  30% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.7;
+    transform: translate(3px, -5.5px) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(4px, -7px) scale(1.1);
+  }
+}
+
+@keyframes songbird-leaf-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+/* High Volume Songbird */
+.group\/mute:not([data-muted]):not([data-video-paused]):not([data-volume-level="low"]):not(
+    [data-volume-level="off"]
+  )
+  .songbird-level-high
+  .songbird-bird {
+  animation: songbird-sing-bob 1.15s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused]):not([data-volume-level="low"]):not(
+    [data-volume-level="off"]
+  )
+  .songbird-level-high
+  .songbird-tail {
+  animation: songbird-tail-wag 0.95s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused]):not([data-volume-level="low"]):not(
+    [data-volume-level="off"]
+  )
+  .songbird-level-high
+  .songbird-wing {
+  animation: songbird-wing-flutter 1.15s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused]):not([data-volume-level="low"]):not(
+    [data-volume-level="off"]
+  )
+  .songbird-level-high
+  .songbird-beak-top {
+  animation: songbird-beak-top-chirp 0.95s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused]):not([data-volume-level="low"]):not(
+    [data-volume-level="off"]
+  )
+  .songbird-level-high
+  .songbird-beak-bottom {
+  animation: songbird-beak-bottom-chirp 0.95s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused]):not([data-volume-level="low"]):not(
+    [data-volume-level="off"]
+  )
+  .songbird-level-high
+  .songbird-note-1 {
+  animation: songbird-note-float 1.8s ease-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused]):not([data-volume-level="low"]):not(
+    [data-volume-level="off"]
+  )
+  .songbird-level-high
+  .songbird-note-2 {
+  animation: songbird-note-float 1.8s ease-out -0.85s infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused]):not([data-volume-level="low"]):not(
+    [data-volume-level="off"]
+  )
+  .songbird-level-high
+  .songbird-leaf {
+  animation: songbird-leaf-sway 2s ease-in-out infinite;
+}
+
+/* Low Volume Songbird (Gentler Sing & Soft Note) */
+.group\/mute:not([data-muted]):not([data-video-paused])[data-volume-level="low"]
+  .songbird-level-low
+  .songbird-bird {
+  animation: songbird-sing-bob 1.8s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused])[data-volume-level="low"]
+  .songbird-level-low
+  .songbird-tail {
+  animation: songbird-tail-wag 1.6s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused])[data-volume-level="low"]
+  .songbird-level-low
+  .songbird-beak-top {
+  animation: songbird-beak-top-chirp 1.5s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused])[data-volume-level="low"]
+  .songbird-level-low
+  .songbird-beak-bottom {
+  animation: songbird-beak-bottom-chirp 1.5s ease-in-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused])[data-volume-level="low"]
+  .songbird-level-low
+  .songbird-note-1 {
+  animation: songbird-note-float 2.4s ease-out infinite;
+}
+
+.group\/mute:not([data-muted]):not([data-video-paused])[data-volume-level="low"]
+  .songbird-level-low
+  .songbird-leaf {
+  animation: songbird-leaf-sway 2.6s ease-in-out infinite;
+}
+
+/* Muted / Off Songbird (Sleeping Cozy with Floating Zzz) */
+.group\/mute:is([data-muted], [data-volume-level="off"]) .songbird-level-off .songbird-bird {
+  animation: songbird-sleep-breathe 2.6s ease-in-out infinite;
+}
+
+.group\/mute:is([data-muted], [data-volume-level="off"]) .songbird-level-off .songbird-zzz-1 {
+  animation: songbird-zzz-float 2.4s ease-in-out infinite;
+}
+
+.group\/mute:is([data-muted], [data-volume-level="off"]) .songbird-level-off .songbird-zzz-2 {
+  animation: songbird-zzz-float 2.4s ease-in-out -1.2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ladybug-elytron-top,
+  .ladybug-elytron-bottom,
+  .ladybug-flight-wing-top,
+  .ladybug-flight-wing-bottom,
+  .storybook-title-overlay {
+    transition: none !important;
+  }
+
+  .ladybug-state-playing .ladybug-body-group,
+  .ladybug-state-playing .ladybug-leg-a,
+  .ladybug-state-playing .ladybug-leg-b,
+  .ladybug-state-playing .ladybug-antennae,
+  .ladybug-state-paused .ladybug-head,
+  .ladybug-state-paused .ladybug-pupils,
+  .ladybug-state-paused .ladybug-antennae,
+  .ladybug-state-wings .ladybug-body-group,
+  .ladybug-state-wings .ladybug-elytron-flutter,
+  .ladybug-state-wings .ladybug-flight-wing-buzz,
+  .group\/mute .songbird-bird,
+  .group\/mute .songbird-tail,
+  .group\/mute .songbird-wing,
+  .group\/mute .songbird-beak-top,
+  .group\/mute .songbird-beak-bottom,
+  .group\/mute .songbird-note-1,
+  .group\/mute .songbird-note-2,
+  .group\/mute .songbird-leaf,
+  .group\/mute .songbird-zzz-1,
+  .group\/mute .songbird-zzz-2 {
+    animation: none !important;
+  }
+}

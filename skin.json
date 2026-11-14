@@ -1,0 +1,9 @@
+{
+  "name": "trace",
+  "framework": "react",
+  "styling": "tailwind",
+  "preset": "video",
+  "base": "neutral",
+  "videojs": "10.4.0",
+  "source": "src"
+}
