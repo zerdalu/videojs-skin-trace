@@ -57,6 +57,8 @@ export function VideoSkin({
   const [containerEl, setContainerEl] = useState<HTMLElement | null>(null);
   const [mode, setMode] = useState<TraceMode>("playback");
   const [sketches, setSketches] = useState<SavedSketch[]>([]);
+  const [editingSketch, setEditingSketch] = useState<SavedSketch | null>(null);
+  const [sketchReturnMode, setSketchReturnMode] = useState<"playback" | "filmstrip">("playback");
   const [activeFilmstripIndex, setActiveFilmstripIndex] = useState(0);
   const [storageKey, setStorageKey] = useState("trace-sketches:v1:default");
   const [savedNoticeVisible, setSavedNoticeVisible] = useState(false);
@@ -113,8 +115,30 @@ export function VideoSkin({
   const handleOpenSketch = useCallback(() => {
     pauseMediaIfPlaying();
     setSavedNoticeVisible(false);
+    setEditingSketch(null);
+    setSketchReturnMode("playback");
     setMode("sketch");
   }, [pauseMediaIfPlaying]);
+
+  const handleEditSketch = useCallback(
+    (sketch: SavedSketch) => {
+      pauseMediaIfPlaying();
+      setSavedNoticeVisible(false);
+      const { media } = findMediaElements(containerEl);
+      if (media) {
+        const maxTime =
+          Number.isFinite(media.duration) && media.duration > 0 ? media.duration : sketch.timestamp;
+        const targetTime = Math.max(0, Math.min(sketch.timestamp, maxTime));
+        if (Math.abs(media.currentTime - targetTime) > 0.05) {
+          media.currentTime = targetTime;
+        }
+      }
+      setEditingSketch(sketch);
+      setSketchReturnMode("filmstrip");
+      setMode("sketch");
+    },
+    [containerEl, pauseMediaIfPlaying],
+  );
 
   const handleOpenFilmstrip = useCallback(() => {
     pauseMediaIfPlaying();
@@ -135,6 +159,22 @@ export function VideoSkin({
 
   const handleSaveSketch = useCallback(
     (sketch: SavedSketch) => {
+      if (editingSketch) {
+        setSketches((prev) => {
+          const existingIndex = prev.findIndex((item) => item.id === sketch.id);
+          const next =
+            existingIndex >= 0
+              ? prev.map((item) => (item.id === sketch.id ? sketch : item))
+              : [...prev, sketch];
+          saveStoredSketches(storageKey, next);
+          setActiveFilmstripIndex(existingIndex >= 0 ? existingIndex : next.length - 1);
+          return next;
+        });
+        setEditingSketch(null);
+        setMode("filmstrip");
+        return;
+      }
+
       setSketches((prev) => {
         const next = [...prev, sketch];
         saveStoredSketches(storageKey, next);
@@ -145,7 +185,7 @@ export function VideoSkin({
       setSavedNoticeVisible(true);
       restoreTriggerFocus("filmstrip");
     },
-    [restoreTriggerFocus, storageKey],
+    [editingSketch, restoreTriggerFocus, storageKey],
   );
 
   const handleDeleteSketch = useCallback(
@@ -177,6 +217,11 @@ export function VideoSkin({
   );
 
   const isPlaybackMode = mode === "playback";
+  const shouldHidePoster = Boolean(
+    mode === "sketch" &&
+    editingSketch &&
+    (!editingSketch.savedWithPoster || editingSketch.timestamp > 0),
+  );
 
   return (
     <Container
@@ -191,7 +236,7 @@ export function VideoSkin({
     >
       <span ref={probeRef} hidden aria-hidden="true" />
       {children}
-      <Poster renderImage={renderPoster} />
+      <Poster className={shouldHidePoster ? "hidden!" : undefined} renderImage={renderPoster} />
       {isPlaybackMode && <BufferingIndicator />}
       <ErrorDialog />
       {isPlaybackMode && <Title containerEl={containerEl} fallbackTitle={title} />}
@@ -209,10 +254,17 @@ export function VideoSkin({
 
       {mode === "sketch" && (
         <SketchOverlay
+          key={editingSketch?.id ?? "new"}
           containerEl={containerEl}
+          editingSketch={editingSketch}
           onCancel={() => {
-            setMode("playback");
-            restoreTriggerFocus("sketch");
+            setEditingSketch(null);
+            if (sketchReturnMode === "filmstrip") {
+              setMode("filmstrip");
+            } else {
+              setMode("playback");
+              restoreTriggerFocus("sketch");
+            }
           }}
           onSaveSketch={handleSaveSketch}
         />
@@ -224,6 +276,7 @@ export function VideoSkin({
           videoTitle={title?.trim() || resolvedVideoTitle}
           activeIndex={activeFilmstripIndex}
           onChangeIndex={setActiveFilmstripIndex}
+          onEditSketch={handleEditSketch}
           onDeleteSketch={handleDeleteSketch}
           onJumpToTimestamp={handleJumpToTimestamp}
           onStartNewSketch={handleOpenSketch}

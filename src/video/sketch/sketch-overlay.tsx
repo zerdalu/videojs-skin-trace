@@ -35,6 +35,7 @@ import { SketchToolbar } from "@/video/sketch/sketch-toolbar";
 
 export interface SketchOverlayProps {
   containerEl: HTMLElement | null;
+  editingSketch?: SavedSketch | null;
   onCancel: () => void;
   onSaveSketch: (sketch: SavedSketch) => void;
 }
@@ -53,6 +54,29 @@ function clamp01(value: number): number {
   return Math.min(1, Math.max(0, value));
 }
 
+function roundCoord(value: number): number {
+  return Math.round(clamp01(value) * 10000) / 10000;
+}
+
+function cloneOperations(operations: ReadonlyArray<DrawOperation>): DrawOperation[] {
+  return operations.map((op) =>
+    op.kind === "stroke"
+      ? { ...op, points: op.points.map((pt) => ({ x: pt.x, y: pt.y })) }
+      : { ...op },
+  );
+}
+
+function compactOperationsForStorage(operations: ReadonlyArray<DrawOperation>): DrawOperation[] {
+  return operations.map((op) =>
+    op.kind === "stroke"
+      ? {
+          ...op,
+          points: op.points.map((pt) => ({ x: roundCoord(pt.x), y: roundCoord(pt.y) })),
+        }
+      : { ...op, x: roundCoord(op.x), y: roundCoord(op.y) },
+  );
+}
+
 function measureVideoRect(containerEl: HTMLElement | null): VideoContentRect {
   if (!containerEl) {
     return { left: 0, top: 0, width: 640, height: 360, aspectRatio: 16 / 9 };
@@ -61,7 +85,37 @@ function measureVideoRect(containerEl: HTMLElement | null): VideoContentRect {
   return computeVideoContentRect(containerEl, video, poster);
 }
 
-export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOverlayProps) {
+function isTargetFrameReady(
+  containerEl: HTMLElement | null,
+  editingSketch: SavedSketch | null,
+): boolean {
+  if (!editingSketch || !containerEl) return true;
+  if (
+    (editingSketch.savedWithPoster && editingSketch.timestamp === 0) ||
+    (!editingSketch.operations && editingSketch.imageDataUrl)
+  ) {
+    return true;
+  }
+
+  const { media, video } = findMediaElements(containerEl);
+  const target = video ?? media;
+  if (!target) return true;
+
+  const currentTime = target.currentTime;
+  const closeEnough =
+    Number.isFinite(currentTime) && Math.abs(currentTime - editingSketch.timestamp) <= 0.25;
+  if (video) {
+    return !video.seeking && video.readyState >= 2 && closeEnough;
+  }
+  return closeEnough;
+}
+
+export function SketchOverlay({
+  containerEl,
+  editingSketch = null,
+  onCancel,
+  onSaveSketch,
+}: SketchOverlayProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const textInputRef = useRef<HTMLInputElement | null>(null);
@@ -70,24 +124,43 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
   const [activeTool, setActiveTool] = useState<DrawingTool>("pen");
   const [activeColor, setActiveColor] = useState<string>(SKETCH_COLORS[1]!.value);
   const [activeSize, setActiveSize] = useState<BrushSize>("md");
-  const [operations, setOperations] = useState<DrawOperation[]>([]);
+  const [operations, setOperations] = useState<DrawOperation[]>(() =>
+    editingSketch?.operations ? cloneOperations(editingSketch.operations) : [],
+  );
   const [redoStack, setRedoStack] = useState<DrawOperation[]>([]);
   const [activeStroke, setActiveStroke] = useState<StrokeOperation | null>(null);
   const [pendingText, setPendingText] = useState<PendingTextPlacement | null>(null);
   const [hoverPoint, setHoverPoint] = useState<{ x: number; y: number } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [useLegacyBackdrop, setUseLegacyBackdrop] = useState<boolean>(() =>
+    Boolean(editingSketch && !editingSketch.operations && editingSketch.imageDataUrl),
+  );
+  const [seekSettled, setSeekSettled] = useState<boolean>(() =>
+    isTargetFrameReady(containerEl, editingSketch),
+  );
 
   const [frameRect, setFrameRect] = useState<VideoContentRect>(() => measureVideoRect(containerEl));
 
-  useDialogFocusTrap(dialogRef);
+  useDialogFocusTrap(dialogRef, editingSketch?.id ?? "new");
+
+  const isFrameReady = seekSettled || useLegacyBackdrop;
 
   const mediaSnapshot = useMemo(() => {
     const { media, video, poster } = findMediaElements(containerEl);
-    const timestamp = Number.isFinite(media?.currentTime) ? media!.currentTime : 0;
-    const duration = Number.isFinite(media?.duration) ? media!.duration : 0;
-    const chapterTitle = readActiveChapterTitle(video, media);
+    const timestamp = editingSketch
+      ? editingSketch.timestamp
+      : Number.isFinite(media?.currentTime)
+        ? media!.currentTime
+        : 0;
+    const duration =
+      editingSketch && editingSketch.duration > 0
+        ? editingSketch.duration
+        : Number.isFinite(media?.duration)
+          ? media!.duration
+          : 0;
+    const chapterTitle = editingSketch?.chapterTitle ?? readActiveChapterTitle(video, media);
     return { media, video, poster, timestamp, duration, chapterTitle };
-  }, [containerEl]);
+  }, [containerEl, editingSketch]);
 
   const updateRect = useCallback(() => {
     if (!containerEl) return;
@@ -103,6 +176,47 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
         : next,
     );
   }, [containerEl]);
+
+  useEffect(() => {
+    if (seekSettled || !editingSketch || !containerEl) return;
+
+    const { media, video } = findMediaElements(containerEl);
+    const target = video ?? media;
+    let active = true;
+
+    const markReady = () => {
+      if (!active) return;
+      setSeekSettled(true);
+      updateRect();
+    };
+
+    if (!target || isTargetFrameReady(containerEl, editingSketch)) {
+      const rafId = window.requestAnimationFrame(markReady);
+      return () => {
+        active = false;
+        window.cancelAnimationFrame(rafId);
+      };
+    }
+
+    const handleSeekEvent = () => {
+      if (!video || (!video.seeking && video.readyState >= 2)) {
+        markReady();
+      }
+    };
+
+    target.addEventListener("seeked", handleSeekEvent);
+    target.addEventListener("loadeddata", handleSeekEvent);
+    target.addEventListener("canplay", handleSeekEvent);
+    const timeoutId = window.setTimeout(markReady, 2500);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timeoutId);
+      target.removeEventListener("seeked", handleSeekEvent);
+      target.removeEventListener("loadeddata", handleSeekEvent);
+      target.removeEventListener("canplay", handleSeekEvent);
+    };
+  }, [containerEl, editingSketch, seekSettled, updateRect]);
 
   useEffect(() => {
     if (!containerEl) return;
@@ -202,6 +316,7 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
     setPendingText(null);
     setOperations([]);
     setRedoStack([]);
+    setUseLegacyBackdrop(false);
   }, []);
 
   useEffect(() => {
@@ -305,7 +420,7 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
   };
 
   const handleSave = async () => {
-    if (isSaving) return;
+    if (isSaving || !isFrameReady) return;
     if (pendingText?.value.trim()) {
       commitPendingText();
     }
@@ -329,24 +444,43 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
 
       const { video, poster } = findMediaElements(containerEl);
       const posterRoot = poster?.closest("media-poster");
-      const preferPoster = Boolean(posterRoot?.hasAttribute("data-visible"));
+      const preferPoster = editingSketch
+        ? Boolean(editingSketch.savedWithPoster && editingSketch.timestamp === 0)
+        : Boolean(posterRoot?.hasAttribute("data-visible"));
+
       const imageDataUrl = await captureCompositeSketch({
         video,
         poster,
         aspectRatio: frameRect.aspectRatio,
         operations: finalOps,
         preferPoster,
+        backdropImageUrl: useLegacyBackdrop ? editingSketch?.imageDataUrl : undefined,
       });
 
-      onSaveSketch({
-        id: createOpId(),
-        imageDataUrl,
-        timestamp: mediaSnapshot.timestamp,
-        duration: mediaSnapshot.duration,
-        createdAt: Date.now(),
-        aspectRatio: frameRect.aspectRatio,
-        chapterTitle: mediaSnapshot.chapterTitle,
-      });
+      if (editingSketch) {
+        onSaveSketch({
+          ...editingSketch,
+          imageDataUrl,
+          duration: mediaSnapshot.duration,
+          aspectRatio: frameRect.aspectRatio,
+          chapterTitle: mediaSnapshot.chapterTitle,
+          updatedAt: Date.now(),
+          savedWithPoster: preferPoster,
+          operations: useLegacyBackdrop ? undefined : compactOperationsForStorage(finalOps),
+        });
+      } else {
+        onSaveSketch({
+          id: createOpId(),
+          imageDataUrl,
+          timestamp: mediaSnapshot.timestamp,
+          duration: mediaSnapshot.duration,
+          createdAt: Date.now(),
+          aspectRatio: frameRect.aspectRatio,
+          chapterTitle: mediaSnapshot.chapterTitle,
+          savedWithPoster: preferPoster,
+          operations: compactOperationsForStorage(finalOps),
+        });
+      }
     } finally {
       setIsSaving(false);
     }
@@ -363,7 +497,7 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
       ref={dialogRef}
       open
       aria-modal="true"
-      aria-label="Video frame drawing mode"
+      aria-label={editingSketch ? "Edit saved sketch" : "Video frame drawing mode"}
       tabIndex={-1}
       className="absolute inset-0 z-30 m-0 size-full max-h-none max-w-none select-none overflow-hidden rounded-[inherit] border-0 bg-transparent p-0 text-inherit outline-hidden"
     >
@@ -377,6 +511,16 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
           height: `${frameRect.height}px`,
         }}
       >
+        {useLegacyBackdrop && editingSketch?.imageDataUrl && (
+          <img
+            src={editingSketch.imageDataUrl}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="pointer-events-none absolute inset-0 size-full object-fill select-none"
+          />
+        )}
+
         <canvas
           ref={canvasRef}
           onPointerDown={handlePointerDown}
@@ -385,7 +529,7 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
           onPointerCancel={finishStroke}
           onPointerLeave={() => setHoverPoint(null)}
           className={cn(
-            "block size-full touch-none",
+            "relative block size-full touch-none",
             activeTool === "text"
               ? "cursor-text"
               : activeTool === "eraser"
@@ -393,6 +537,15 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
                 : "cursor-crosshair",
           )}
         />
+
+        {editingSketch && !isFrameReady && (
+          <div
+            aria-live="polite"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-(--media-frame-border,#805D35) bg-media-popover/90 px-3 py-1 text-xs font-bold text-media-popover-foreground shadow-md"
+          >
+            Finding frame…
+          </div>
+        )}
 
         {/* Custom Eraser Ring Preview */}
         {activeTool === "eraser" && hoverPoint && (
@@ -460,8 +613,10 @@ export function SketchOverlay({ containerEl, onCancel, onSaveSketch }: SketchOve
         timestamp={mediaSnapshot.timestamp}
         canUndo={operations.length > 0}
         canRedo={redoStack.length > 0}
-        hasOperations={operations.length > 0}
+        hasOperations={operations.length > 0 || useLegacyBackdrop}
         isSaving={isSaving}
+        isEditing={Boolean(editingSketch)}
+        saveDisabled={!isFrameReady}
         onSelectTool={(tool) => {
           if (tool !== "text" && pendingText) commitPendingText();
           setActiveTool(tool);

@@ -180,6 +180,15 @@ function loadCorsImage(src: string): Promise<HTMLImageElement | null> {
   });
 }
 
+function loadLocalImage(src: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
 async function drawPosterBackground(
   ctx: CanvasRenderingContext2D,
   poster: HTMLImageElement | null,
@@ -209,8 +218,16 @@ export async function captureCompositeSketch(options: {
   aspectRatio: number;
   operations: DrawOperation[];
   preferPoster?: boolean;
+  backdropImageUrl?: string;
 }): Promise<string> {
-  const { video, poster, aspectRatio, operations, preferPoster = false } = options;
+  const {
+    video,
+    poster,
+    aspectRatio,
+    operations,
+    preferPoster = false,
+    backdropImageUrl,
+  } = options;
   const safeRatio = Number.isFinite(aspectRatio) && aspectRatio > 0 ? aspectRatio : 16 / 9;
   const baseWidth =
     video && video.videoWidth > 0 ? Math.min(1600, Math.max(1280, video.videoWidth)) : 1280;
@@ -232,7 +249,19 @@ export async function captureCompositeSketch(options: {
   ctx.fillRect(0, 0, outWidth, outHeight);
 
   let drewBackground = false;
-  if (preferPoster) {
+  if (backdropImageUrl) {
+    const backdropImg = await loadLocalImage(backdropImageUrl);
+    if (backdropImg && backdropImg.naturalWidth > 0) {
+      try {
+        ctx.drawImage(backdropImg, 0, 0, outWidth, outHeight);
+        drewBackground = true;
+      } catch {
+        drewBackground = false;
+      }
+    }
+  }
+
+  if (!drewBackground && preferPoster) {
     drewBackground = await drawPosterBackground(ctx, poster, outWidth, outHeight);
   }
 
@@ -297,6 +326,15 @@ export function loadStoredSketches(storageKey: string): SavedSketch[] {
 
 export function saveStoredSketches(storageKey: string, sketches: SavedSketch[]): void {
   const trimmed = sketches.slice(-MAX_STORED_SKETCHES);
+  if (trimmed.length === 0) {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch {
+      // Ignore storage failures when clearing.
+    }
+    return;
+  }
+
   while (trimmed.length > 0) {
     try {
       localStorage.setItem(storageKey, JSON.stringify(trimmed));

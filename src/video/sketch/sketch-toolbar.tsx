@@ -37,6 +37,8 @@ export interface SketchToolbarProps {
   canRedo: boolean;
   hasOperations: boolean;
   isSaving: boolean;
+  isEditing?: boolean;
+  saveDisabled?: boolean;
   onSelectTool: (tool: DrawingTool) => void;
   onSelectColor: (color: string) => void;
   onSelectSize: (size: BrushSize) => void;
@@ -63,6 +65,8 @@ export function SketchToolbar({
   canRedo,
   hasOperations,
   isSaving,
+  isEditing = false,
+  saveDisabled = false,
   onSelectTool,
   onSelectColor,
   onSelectSize,
@@ -91,7 +95,7 @@ export function SketchToolbar({
           )}
         >
           <span className="inline-block size-2.5 rounded-full bg-[#F59E0B] ring-2 ring-media-primary/30" />
-          <span className="media-max-xs:hidden">Sketch Mode</span>
+          <span className="media-max-xs:hidden">{isEditing ? "Edit Sketch" : "Sketch Mode"}</span>
           <span className="storybook-tabular-nums rounded-md bg-media-accent px-1.5 py-0.5 tabular-nums text-media-primary">
             {formatSketchTime(timestamp)}
           </span>
@@ -169,11 +173,11 @@ export function SketchToolbar({
           <button
             type="button"
             onClick={onSave}
-            disabled={isSaving}
-            aria-label="Save sketch"
+            disabled={isSaving || saveDisabled}
+            aria-label={isEditing ? "Save sketch changes" : "Save sketch"}
             className={cn(
               "flex h-8 pointer-coarse:h-9 media-md:pointer-coarse:h-10 items-center gap-1.5 rounded-xl border-2 border-[#3B561E] bg-[#6E9A3E] px-2.5 media-md:px-3 text-xs font-bold text-[#FFFDF7]",
-              "shadow-sm transition-all cursor-pointer hover:bg-[#5E8633] motion-safe:active:scale-95 disabled:opacity-60",
+              "shadow-sm transition-all cursor-pointer hover:bg-[#5E8633] motion-safe:active:scale-95 disabled:cursor-not-allowed disabled:opacity-60",
               "focus-visible:outline-2 focus-visible:outline-media-ring",
             )}
           >

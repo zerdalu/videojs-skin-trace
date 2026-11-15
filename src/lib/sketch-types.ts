@@ -39,8 +39,11 @@ export interface SavedSketch {
   timestamp: number;
   duration: number;
   createdAt: number;
+  updatedAt?: number;
   aspectRatio: number;
   chapterTitle?: string;
+  operations?: DrawOperation[];
+  savedWithPoster?: boolean;
 }
 
 export interface SketchColorOption {
