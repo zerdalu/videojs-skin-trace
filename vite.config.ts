@@ -11,12 +11,12 @@ const path = (file: string) => fileURLToPath(new URL(file, import.meta.url));
 function previewAsIndexPlugin(): Plugin {
   const promotePreviewToIndex = () => {
     const distDir = path("./dist");
-    const previewPath = resolve(distDir, "preview.html");
+    const landingPath = resolve(distDir, "landing.html");
     const indexPath = resolve(distDir, "index.html");
 
-    if (existsSync(previewPath)) {
-      copyFileSync(previewPath, indexPath);
-      unlinkSync(previewPath);
+    if (existsSync(landingPath)) {
+      copyFileSync(landingPath, indexPath);
+      unlinkSync(landingPath);
     }
   };
 
@@ -24,19 +24,19 @@ function previewAsIndexPlugin(): Plugin {
     name: "preview-as-index",
     enforce: "post",
     generateBundle(_, bundle) {
-      const previewKey = bundle["preview.html"]
-        ? "preview.html"
-        : Object.keys(bundle).find((key) => key.endsWith("preview.html"));
+      const landingKey = bundle["landing.html"]
+        ? "landing.html"
+        : Object.keys(bundle).find((key) => key.endsWith("landing.html"));
 
-      if (previewKey && bundle[previewKey]) {
-        const preview = bundle[previewKey];
-        if (preview.type === "asset") {
+      if (landingKey && bundle[landingKey]) {
+        const landing = bundle[landingKey];
+        if (landing.type === "asset") {
           this.emitFile({
             type: "asset",
             fileName: "index.html",
-            source: preview.source,
+            source: landing.source,
           });
-          delete bundle[previewKey];
+          delete bundle[landingKey];
         }
       }
     },
@@ -73,13 +73,15 @@ export default defineConfig({
     outDir: path("./dist"),
     emptyOutDir: true,
     rollupOptions: {
-      // Build only the player preview, which is promoted to index.html in dist.
+      // Build the storybook landing page as index.html while keeping the bare player preview at preview.html.
       input: {
+        landing: path("./apps/preview/landing.html"),
         preview: path("./apps/preview/preview.html"),
       },
     },
     rolldownOptions: {
       input: {
+        landing: path("./apps/preview/landing.html"),
         preview: path("./apps/preview/preview.html"),
       },
     },

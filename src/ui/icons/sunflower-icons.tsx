@@ -1,6 +1,6 @@
 /** @jsxImportSource react */
 
-import type { ComponentProps } from "react";
+import { useId, type ComponentProps } from "react";
 import { cn } from "@/lib/resolve-class-name";
 
 type StorybookIconProps = ComponentProps<"svg">;
@@ -10,6 +10,10 @@ type StorybookIconProps = ComponentProps<"svg">;
  * warm inner rim, and chunky wood/ink play arrow.
  */
 export function SunflowerPlayIcon({ className, ...props }: StorybookIconProps) {
+  const uid = useId().replace(/:/g, "");
+  const centerId = `${uid}-sunflower-center`;
+  const petalId = `${uid}-sunflower-petal`;
+
   return (
     <svg
       viewBox="0 0 64 64"
@@ -20,12 +24,12 @@ export function SunflowerPlayIcon({ className, ...props }: StorybookIconProps) {
       {...props}
     >
       <defs>
-        <radialGradient id="sunflower-center" cx="50%" cy="50%" r="50%">
+        <radialGradient id={centerId} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#FDE047" />
           <stop offset="65%" stopColor="#F59E0B" />
           <stop offset="100%" stopColor="#D97706" />
         </radialGradient>
-        <linearGradient id="sunflower-petal" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={petalId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#FEF08A" />
           <stop offset="40%" stopColor="#FBBF24" />
           <stop offset="100%" stopColor="#F59E0B" />
@@ -38,7 +42,7 @@ export function SunflowerPlayIcon({ className, ...props }: StorybookIconProps) {
           <path
             key={deg}
             d="M 32 14 C 29 10 27 5 32 2 C 37 5 35 10 32 14 Z"
-            fill="url(#sunflower-petal)"
+            fill={`url(#${petalId})`}
             transform={`rotate(${deg} 32 32)`}
           />
         ))}
@@ -49,7 +53,7 @@ export function SunflowerPlayIcon({ className, ...props }: StorybookIconProps) {
         cx="32"
         cy="32"
         r="18.5"
-        fill="url(#sunflower-center)"
+        fill={`url(#${centerId})`}
         stroke="#6A3F12"
         strokeWidth="2"
       />
@@ -80,6 +84,10 @@ export function SunflowerPlayIcon({ className, ...props }: StorybookIconProps) {
  * Hand-illustrated sunflower pause icon with dual leaf/wood pause bars.
  */
 export function SunflowerPauseIcon({ className, ...props }: StorybookIconProps) {
+  const uid = useId().replace(/:/g, "");
+  const centerId = `${uid}-sunflower-center-pause`;
+  const petalId = `${uid}-sunflower-petal-pause`;
+
   return (
     <svg
       viewBox="0 0 64 64"
@@ -90,12 +98,12 @@ export function SunflowerPauseIcon({ className, ...props }: StorybookIconProps) 
       {...props}
     >
       <defs>
-        <radialGradient id="sunflower-center-pause" cx="50%" cy="50%" r="50%">
+        <radialGradient id={centerId} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#FDE047" />
           <stop offset="65%" stopColor="#F59E0B" />
           <stop offset="100%" stopColor="#D97706" />
         </radialGradient>
-        <linearGradient id="sunflower-petal-pause" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={petalId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#FEF08A" />
           <stop offset="40%" stopColor="#FBBF24" />
           <stop offset="100%" stopColor="#F59E0B" />
@@ -108,7 +116,7 @@ export function SunflowerPauseIcon({ className, ...props }: StorybookIconProps) 
           <path
             key={deg}
             d="M 32 14 C 29 10 27 5 32 2 C 37 5 35 10 32 14 Z"
-            fill="url(#sunflower-petal-pause)"
+            fill={`url(#${petalId})`}
             transform={`rotate(${deg} 32 32)`}
           />
         ))}
@@ -119,7 +127,7 @@ export function SunflowerPauseIcon({ className, ...props }: StorybookIconProps) 
         cx="32"
         cy="32"
         r="18.5"
-        fill="url(#sunflower-center-pause)"
+        fill={`url(#${centerId})`}
         stroke="#6A3F12"
         strokeWidth="2"
       />
@@ -162,6 +170,10 @@ export function SunflowerPauseIcon({ className, ...props }: StorybookIconProps) 
  * Hand-illustrated restart arrow inside the sunflower medallion.
  */
 export function SunflowerRestartIcon({ className, ...props }: StorybookIconProps) {
+  const uid = useId().replace(/:/g, "");
+  const centerId = `${uid}-sunflower-center-restart`;
+  const petalId = `${uid}-sunflower-petal-restart`;
+
   return (
     <svg
       viewBox="0 0 64 64"
@@ -172,12 +184,12 @@ export function SunflowerRestartIcon({ className, ...props }: StorybookIconProps
       {...props}
     >
       <defs>
-        <radialGradient id="sunflower-center-restart" cx="50%" cy="50%" r="50%">
+        <radialGradient id={centerId} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#FDE047" />
           <stop offset="65%" stopColor="#F59E0B" />
           <stop offset="100%" stopColor="#D97706" />
         </radialGradient>
-        <linearGradient id="sunflower-petal-restart" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={petalId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#FEF08A" />
           <stop offset="40%" stopColor="#FBBF24" />
           <stop offset="100%" stopColor="#F59E0B" />
@@ -190,7 +202,7 @@ export function SunflowerRestartIcon({ className, ...props }: StorybookIconProps
           <path
             key={deg}
             d="M 32 14 C 29 10 27 5 32 2 C 37 5 35 10 32 14 Z"
-            fill="url(#sunflower-petal-restart)"
+            fill={`url(#${petalId})`}
             transform={`rotate(${deg} 32 32)`}
           />
         ))}
@@ -200,7 +212,7 @@ export function SunflowerRestartIcon({ className, ...props }: StorybookIconProps
         cx="32"
         cy="32"
         r="18.5"
-        fill="url(#sunflower-center-restart)"
+        fill={`url(#${centerId})`}
         stroke="#6A3F12"
         strokeWidth="2"
       />

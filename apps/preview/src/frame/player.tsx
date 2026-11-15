@@ -1,7 +1,7 @@
 import { MuxVideo } from "@videojs/react/media/mux-video";
 import { VideoPlayer } from "@videojs/react/video";
 
-import { VideoSkin } from "@/video/skin";
+import { VideoSkin, type VideoSkinProps } from "@/video/skin";
 
 import type { PlaybackProps } from "../shell/params";
 
@@ -13,11 +13,16 @@ const POSTER = `https://image.mux.com/${PLAYBACK_ID}/thumbnail.webp?time=30`;
 const CHAPTERS = "./llamigos-chapters.vtt";
 const CAPTIONS = "./llamigos-captions.vtt";
 
+export interface PlayerProps {
+  media?: PlaybackProps;
+  skinProps?: Omit<VideoSkinProps, "children">;
+}
+
 /** `media` carries the workbench's playback options: autoplay, muted, loop, and preload. */
-export function Player({ media }: { media?: PlaybackProps }) {
+export function Player({ media, skinProps }: PlayerProps) {
   return (
     <VideoPlayer poster={POSTER}>
-      <VideoSkin>
+      <VideoSkin {...skinProps}>
         <MuxVideo {...media} src={SRC} title="Caminandes 3: Llamigos" playsInline crossOrigin="">
           <track kind="chapters" label="English" srcLang="en" src={CHAPTERS} default />
           <track kind="captions" label="English" srcLang="en" src={CAPTIONS} default />
