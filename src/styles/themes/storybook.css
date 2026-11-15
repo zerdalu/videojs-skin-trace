@@ -138,6 +138,20 @@
     inset 0 0 0 5px var(--media-border, #b4966e);
 }
 
+@media (max-width: 480px) {
+  .media-skin[data-theme="storybook"]:not([data-theme="neutral"]) {
+    --media-video-border-radius: 18px;
+  }
+
+  .storybook-stitched-frame {
+    border-width: 2.5px;
+    border-radius: 18px;
+    box-shadow:
+      inset 0 0 0 2px var(--media-background, #faf2e3),
+      inset 0 0 0 3.5px var(--media-border, #b4966e);
+  }
+}
+
 /* Hide scrollbars on horizontally scrollable mobile toolbars while preserving scrollability */
 .storybook-no-scrollbar {
   scrollbar-width: none;
@@ -167,6 +181,89 @@
 @media (pointer: fine) {
   .media-skin:not([data-controls-visible]) .storybook-title-overlay {
     filter: blur(var(--media-hidden-blur, 8px));
+  }
+}
+
+/* Responsive Caption Bounds & Translucent Vellum Plaque Styling */
+.storybook-captions-layer {
+  top: 0.5rem;
+  bottom: 0.75rem;
+  transition:
+    top var(--media-duration-controls, 200ms) ease-out,
+    bottom var(--media-duration-controls, 200ms) ease-out,
+    opacity var(--media-duration-controls, 200ms) ease-out,
+    transform var(--media-duration-controls, 200ms) ease-out;
+}
+
+.storybook-caption-plaque {
+  background-color: var(--media-popover, #fffdf7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@supports (color: color-mix(in oklab, red, red)) {
+  .storybook-caption-plaque {
+    background-color: color-mix(in oklab, var(--media-popover, #fffdf7) 76%, transparent);
+    border-color: color-mix(in oklab, var(--media-frame-border, #805d35) 78%, transparent);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .storybook-caption-plaque {
+    background-color: var(--media-popover, #fffdf7);
+    border-color: var(--media-frame-border, #805d35);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.media-skin[data-controls-visible] .storybook-captions-layer {
+  top: 3.5rem;
+  bottom: 5rem;
+}
+
+@container media-root (width >= 28rem) {
+  .storybook-captions-layer {
+    top: 0.75rem;
+    bottom: 1.25rem;
+  }
+
+  .media-skin[data-controls-visible] .storybook-captions-layer {
+    top: 3.5rem;
+    bottom: 5.25rem;
+  }
+}
+
+@container media-root (width < 36rem) {
+  .media-skin[data-controls-visible] .storybook-captions-layer {
+    bottom: 5.75rem;
+  }
+}
+
+@container media-root (width < 28rem) {
+  .storybook-captions-layer {
+    top: 0.375rem;
+    bottom: 0.5rem;
+  }
+
+  .media-skin[data-controls-visible] .storybook-captions-layer {
+    top: 2.75rem;
+    bottom: 3.375rem;
+  }
+
+  .storybook-caption-plaque {
+    max-width: 94%;
+    padding: 0.1875rem 0.625rem;
+    border-width: 1.5px;
+    border-radius: 0.625rem;
+    font-size: clamp(0.65rem, 3.1cqi, 0.8125rem);
+    line-height: 1.2;
+  }
+}
+
+@container media-root (width < 10rem) {
+  .storybook-captions-layer {
+    display: none;
   }
 }
 
@@ -642,7 +739,8 @@
   .ladybug-elytron-bottom,
   .ladybug-flight-wing-top,
   .ladybug-flight-wing-bottom,
-  .storybook-title-overlay {
+  .storybook-title-overlay,
+  .storybook-captions-layer {
     transition: none !important;
   }
 

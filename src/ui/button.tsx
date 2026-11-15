@@ -10,7 +10,8 @@ export function Button({ className, ...props }: ButtonProps) {
   return (
     <button
       className={cn(
-        "grid size-media-control min-h-0 shrink-0 touch-manipulation select-none place-items-center rounded-media-control border-0 bg-transparent p-1 text-center text-media-controls-foreground",
+        "relative grid size-media-control min-h-0 shrink-0 touch-manipulation select-none place-items-center rounded-media-control border-0 bg-transparent p-1 text-center text-media-controls-foreground",
+        "pointer-coarse:after:pointer-events-auto pointer-coarse:after:absolute pointer-coarse:after:-inset-x-1 pointer-coarse:after:-inset-y-2 pointer-coarse:after:rounded-full",
         "cursor-pointer",
         "transition-all duration-media-base ease-out",
         "motion-safe:hover:scale-105 hover:bg-media-accent/85",

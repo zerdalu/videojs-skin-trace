@@ -1,7 +1,11 @@
 @layer components {
   @scope (.media-skin) {
     /* Suppress native cue rendering so StorybookCaptions renders custom storybook plaques instead. */
-    video::-webkit-media-text-track-container {
+    video::-webkit-media-text-track-container,
+    video::-webkit-media-text-track-display,
+    video::-webkit-media-text-track-display-backdrop,
+    video::-webkit-media-text-track-region,
+    video::-webkit-media-text-track-region-container {
       display: none !important;
       opacity: 0 !important;
       visibility: hidden !important;
@@ -12,6 +16,7 @@
       color: transparent !important;
       background: transparent !important;
       text-shadow: none !important;
+      opacity: 0 !important;
     }
   }
 }

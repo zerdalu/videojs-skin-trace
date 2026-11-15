@@ -11,6 +11,51 @@ export interface ActiveCaptionCue {
   nodes: CueInlineNode[];
 }
 
+const NATIVE_CAPTION_STYLE_ATTR = "data-trace-hide-native-captions";
+
+const NATIVE_CAPTION_SUPPRESSION_CSS = `
+video::-webkit-media-text-track-container,
+video::-webkit-media-text-track-display,
+video::-webkit-media-text-track-display-backdrop,
+video::-webkit-media-text-track-region,
+video::-webkit-media-text-track-region-container {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+video::cue {
+  color: transparent !important;
+  background: transparent !important;
+  text-shadow: none !important;
+  opacity: 0 !important;
+}
+`;
+
+function injectSuppressionStyle(root: ShadowRoot | null | undefined): void {
+  if (!root) return;
+  if (root.querySelector(`style[${NATIVE_CAPTION_STYLE_ATTR}]`)) return;
+
+  const style = document.createElement("style");
+  style.setAttribute(NATIVE_CAPTION_STYLE_ATTR, "");
+  style.textContent = NATIVE_CAPTION_SUPPRESSION_CSS;
+  root.appendChild(style);
+}
+
+export function suppressNativeVideoCaptions(
+  video: HTMLVideoElement | null,
+  media: MediaHostLike | null,
+): void {
+  const videoRoot = video?.getRootNode();
+  if (typeof ShadowRoot !== "undefined" && videoRoot instanceof ShadowRoot) {
+    injectSuppressionStyle(videoRoot);
+  }
+  if (media?.shadowRoot && media.shadowRoot !== videoRoot) {
+    injectSuppressionStyle(media.shadowRoot);
+  }
+}
+
 function splitLinesToNodes(text: string): CueInlineNode[] {
   if (!text) return [];
   const parts = text.split(/\r?\n/);
@@ -117,13 +162,16 @@ export function isCaptionTrack(track: TextTrack): boolean {
 export function readActiveCaptionCues(trackList: TextTrackList | null): ActiveCaptionCue[] {
   if (!trackList) return [];
 
-  const result: ActiveCaptionCue[] = [];
   for (let t = 0; t < trackList.length; t += 1) {
     const track = trackList[t];
     if (!track || !isCaptionTrack(track) || track.mode !== "showing") continue;
 
     const active = track.activeCues;
-    if (!active) continue;
+    if (!active || active.length === 0) continue;
+
+    let chosenCue: TextTrackCue | null = null;
+    let chosenNodes: CueInlineNode[] = [];
+    let chosenRawText = "";
 
     for (let c = 0; c < active.length; c += 1) {
       const cue = active[c];
@@ -132,14 +180,24 @@ export function readActiveCaptionCues(trackList: TextTrackList | null): ActiveCa
       const { nodes, rawText } = parseCueNodes(cue);
       if (!hasVisibleText(nodes)) continue;
 
-      const signature = `${t}:${c}:${cue.id}:${cue.startTime}:${cue.endTime}:${rawText}`;
-      result.push({
-        key: `${t}-${c}-${cue.id || `${cue.startTime}-${cue.endTime}`}`,
-        signature,
-        nodes,
-      });
+      if (!chosenCue || cue.startTime >= chosenCue.startTime) {
+        chosenCue = cue;
+        chosenNodes = nodes;
+        chosenRawText = rawText;
+      }
+    }
+
+    if (chosenCue) {
+      const cueIdPart = chosenCue.id || `${chosenCue.startTime}-${chosenCue.endTime}`;
+      return [
+        {
+          key: `${t}-${cueIdPart}`,
+          signature: `${t}:${chosenCue.id}:${chosenCue.startTime}:${chosenCue.endTime}:${chosenRawText}`,
+          nodes: chosenNodes,
+        },
+      ];
     }
   }
 
-  return result;
+  return [];
 }

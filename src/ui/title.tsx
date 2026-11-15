@@ -19,7 +19,7 @@ export interface TitleProps extends Omit<TitlePrimitive.Props, "children"> {
 }
 
 const TITLE_PILL_CLASS =
-  "inline-block max-w-full truncate rounded-xl border-2 border-(--media-frame-border,#805D35) bg-media-popover/95 px-3.5 py-1 text-sm font-bold tracking-tight text-media-popover-foreground shadow-[0_2px_8px_rgba(80,50,20,0.18)] empty:hidden";
+  "inline-block max-w-full truncate rounded-lg media-md:rounded-xl border-2 border-(--media-frame-border,#805D35) bg-media-popover/95 px-2.5 py-0.5 media-md:px-3.5 media-md:py-1 text-xs media-md:text-sm font-bold tracking-tight text-media-popover-foreground shadow-[0_2px_8px_rgba(80,50,20,0.18)] empty:hidden";
 
 export function Title({ className, containerEl, fallbackTitle, ...props }: TitleProps = {}) {
   const probeRef = useRef<HTMLDivElement | null>(null);
@@ -64,8 +64,8 @@ export function Title({ className, containerEl, fallbackTitle, ...props }: Title
     <div
       ref={probeRef}
       className={cn(
-        "storybook-title-overlay pointer-events-none absolute top-2.5 inset-s-2.5 inset-e-26 z-20 isolate flex items-start",
-        "media-md:top-3.5 media-md:inset-s-3.5 media-md:inset-e-20 media-max-3xs:hidden",
+        "storybook-title-overlay pointer-events-none absolute top-1.5 inset-s-1.5 inset-e-23 z-20 isolate flex items-start",
+        "media-md:top-3.5 media-md:inset-s-3.5 media-md:inset-e-20 media-max-2xs:hidden",
       )}
     >
       {resolvedTitle ? (

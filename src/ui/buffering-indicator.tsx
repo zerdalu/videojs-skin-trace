@@ -20,13 +20,13 @@ export function BufferingIndicator({ className, ...props }: BufferingIndicatorPr
       }
       {...props}
     >
-      <div className="relative z-30 flex flex-col items-center gap-2">
+      <div className="relative z-30 flex flex-col items-center gap-1.5 media-md:gap-2">
         {/* Spinning Sunflower Whirligig */}
         <svg
           viewBox="0 0 48 48"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="size-14 motion-safe:animate-spin text-[#F59E0B] drop-shadow-[0_2px_4px_rgba(90,50,20,0.3)]"
+          className="size-10 media-md:size-14 motion-safe:animate-spin text-[#F59E0B] drop-shadow-[0_2px_4px_rgba(90,50,20,0.3)]"
           aria-hidden="true"
         >
           {/* Petals */}
@@ -56,7 +56,7 @@ export function BufferingIndicator({ className, ...props }: BufferingIndicatorPr
           />
         </svg>
 
-        <span className="rounded-full border-2 border-(--media-frame-border,#805D35) bg-media-popover px-3 py-1 font-bold text-xs tracking-wider text-media-popover-foreground shadow-md">
+        <span className="rounded-full border-2 border-(--media-frame-border,#805D35) bg-media-popover px-2.5 py-0.5 text-[11px] media-md:px-3 media-md:py-1 media-md:text-xs font-bold tracking-wider text-media-popover-foreground shadow-md">
           Turning page…
         </span>
       </div>

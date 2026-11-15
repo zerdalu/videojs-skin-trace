@@ -320,7 +320,7 @@ export function TimeSlider({
       className={(state) =>
         cn(
           "group/slider relative flex flex-1 cursor-pointer items-center justify-center outline-hidden",
-          "data-disabled:pointer-events-none py-2 pointer-coarse:py-3",
+          "data-disabled:pointer-events-none py-1.5 pointer-coarse:py-2",
           "transition-[--media-slider-fill,--media-slider-buffer] duration-media-slider ease-out data-dragging:duration-0",
           resolveClassName(className, state),
         )

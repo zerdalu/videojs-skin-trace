@@ -26,7 +26,7 @@ export function VolumeIndicator({ className, ...props }: VolumeIndicatorProps = 
           "pointer-events-none absolute origin-top",
           "transition-[opacity,translate,filter] duration-media-fast ease-out",
           "media-transitioning:opacity-0 media-transitioning:duration-media-indicator media-transitioning:ease-in",
-          "inset-x-0 top-3 flex justify-center",
+          "inset-x-0 top-1.5 media-md:top-3 flex justify-center",
           "pointer-fine:media-transitioning:blur-media-hidden",
           "data-ending-style:translate-y-media-hidden-indicator-offset",
           "group/volume-status",
@@ -37,8 +37,8 @@ export function VolumeIndicator({ className, ...props }: VolumeIndicatorProps = 
     >
       <VolumeIndicatorPrimitive.Fill
         className={cn(
-          "items-center justify-between gap-2.5 px-3.5 py-2",
-          "rounded-2xl border-2 border-(--media-frame-border,#805D35) bg-media-popover/95 text-media-popover-foreground",
+          "items-center justify-between gap-2 media-md:gap-2.5 px-2.5 py-1.5 media-md:px-3.5 media-md:py-2",
+          "rounded-xl media-md:rounded-2xl border-2 border-(--media-frame-border,#805D35) bg-media-popover/95 text-media-popover-foreground",
           "shadow-[0_6px_20px_rgba(32,23,14,0.28)]",
           "grid w-[min(80%,14rem)] grid-cols-[auto_minmax(0,1fr)_auto] transform-[translateX(0)]",
           "before:col-start-2 before:row-start-1 before:h-1.5 before:w-full before:rounded-media-pill",

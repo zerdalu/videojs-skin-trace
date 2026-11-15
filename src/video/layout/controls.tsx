@@ -46,8 +46,8 @@ export function NeutralVideoControls({
         aria-hidden={hiddenByMode || undefined}
         className={cn(
           "group/sketch-controls text-media-controls-foreground text-shadow-media",
-          "absolute top-2.5 inset-e-2.5 z-30 flex flex-row media-md:flex-col items-center gap-1 media-md:top-3.5 media-md:inset-e-3.5",
-          "rounded-2xl bg-media-popover/95 border-2 border-(--media-frame-border,#805D35) px-1.5 py-1 media-md:py-1.5 shadow-[0_4px_16px_rgba(80,50,20,0.18)]",
+          "absolute top-1.5 inset-e-1.5 z-30 flex flex-row items-center gap-0.5 media-md:top-3.5 media-md:inset-e-3.5 media-md:flex-col media-md:gap-1",
+          "rounded-xl media-md:rounded-2xl bg-media-popover/95 border-2 border-(--media-frame-border,#805D35) px-1 py-0.5 media-md:px-1.5 media-md:py-1.5 shadow-[0_4px_16px_rgba(80,50,20,0.18)]",
           "origin-top-right transition-[filter,opacity,translate] duration-media-controls-enter ease-out",
           "not-data-visible:pointer-events-none not-data-visible:opacity-0 not-data-visible:duration-media-controls",
           "pointer-fine:not-data-visible:blur-media-hidden",
@@ -64,7 +64,7 @@ export function NeutralVideoControls({
               onClick={onOpenSketch}
               aria-label="Sketch on video frame"
               className={cn(
-                "size-10! pointer-coarse:size-11! media-max-3xs:size-8! media-max-3xs:pointer-coarse:size-9! p-0.5! motion-safe:hover:scale-110 motion-safe:active:scale-95 transition-transform duration-media-base",
+                "size-8! media-md:size-10! media-md:pointer-coarse:size-11! p-0.5! motion-safe:hover:scale-110 motion-safe:active:scale-95 transition-transform duration-media-base",
                 "group-not-data-visible/sketch-controls:pointer-events-none",
               )}
             >
@@ -79,7 +79,7 @@ export function NeutralVideoControls({
               onClick={onOpenFilmstrip}
               aria-label="Open saved sketches filmstrip"
               className={cn(
-                "relative size-10! pointer-coarse:size-11! media-max-3xs:size-8! media-max-3xs:pointer-coarse:size-9! p-0.5! motion-safe:hover:scale-110 motion-safe:active:scale-95 transition-transform duration-media-base",
+                "relative size-8! media-md:size-10! media-md:pointer-coarse:size-11! p-0.5! motion-safe:hover:scale-110 motion-safe:active:scale-95 transition-transform duration-media-base",
                 "group-not-data-visible/sketch-controls:pointer-events-none",
               )}
             >
@@ -87,7 +87,7 @@ export function NeutralVideoControls({
               {sketchCount > 0 && (
                 <span
                   aria-hidden="true"
-                  className="storybook-tabular-nums absolute -top-0.5 -inset-e-0.5 grid min-w-4 h-4 place-items-center rounded-full border border-[#3F2D1C] bg-[#F59E0B] px-1 text-[10px] font-extrabold leading-none text-[#2B2118] shadow-xs tabular-nums"
+                  className="storybook-tabular-nums absolute -top-0.5 -inset-e-0.5 grid min-w-3.5 h-3.5 media-md:min-w-4 media-md:h-4 place-items-center rounded-full border border-[#3F2D1C] bg-[#F59E0B] px-1 text-[9px] media-md:text-[10px] font-extrabold leading-none text-[#2B2118] shadow-xs tabular-nums"
                 >
                   {sketchCount}
                 </span>
@@ -115,7 +115,7 @@ export function NeutralVideoControls({
           <PlayButton
             className={cn(
               "pointer-events-auto group-not-data-visible/center:pointer-events-none",
-              "size-28! media-max-sm:size-20! media-max-3xs:size-14! rounded-full!",
+              "size-16! media-md:size-28! media-max-3xs:size-12! rounded-full!",
               "data-started:not-focus-visible:opacity-(--media-center-play-started-opacity,0)!",
               "data-started:not-focus-visible:[pointer-events:var(--media-center-play-started-pointer-events,none)]!",
             )}
@@ -128,7 +128,7 @@ export function NeutralVideoControls({
       <Controls.Backdrop
         aria-hidden={hiddenByMode || undefined}
         className={cn(
-          "pointer-events-none absolute inset-x-0 bottom-0 h-28 z-10 rounded-b-[22px]",
+          "pointer-events-none absolute inset-x-0 bottom-0 h-16 media-md:h-28 z-10 rounded-b-2xl media-md:rounded-b-[22px]",
           "bg-linear-to-t from-media-background/90 via-media-background/50 to-transparent",
           "transition-opacity duration-media-controls ease-out not-data-visible:opacity-0",
           "not-data-started:[visibility:var(--media-controls-before-start,hidden)]",
@@ -145,8 +145,8 @@ export function NeutralVideoControls({
           "group/controls text-media-controls-foreground text-shadow-media",
           "duration-media-controls-enter ease-out",
           "not-data-started:[visibility:var(--media-controls-before-start,hidden)]",
-          "absolute inset-x-2 bottom-2 z-30 flex flex-nowrap items-center rtl:flex-row-reverse gap-x-2 rounded-2xl bg-media-popover/95 border-2 border-(--media-frame-border,#805D35) px-2.5 py-1.5 shadow-[0_4px_16px_rgba(80,50,20,0.18)]",
-          "media-max-xl:flex-wrap media-max-xl:justify-between media-max-xl:gap-y-0.5 media-max-xl:px-2",
+          "absolute inset-x-1.5 bottom-1.5 media-md:inset-x-2 media-md:bottom-2 z-30 flex flex-nowrap items-center rtl:flex-row-reverse gap-x-1 media-md:gap-x-2 rounded-xl media-md:rounded-2xl bg-media-popover/95 border-2 border-(--media-frame-border,#805D35) px-1.5 py-1 media-md:px-2.5 media-md:py-1.5 shadow-[0_4px_16px_rgba(80,50,20,0.18)]",
+          "media-max-xl:flex-wrap media-max-xl:justify-between media-max-xl:gap-y-0.5",
           "transition-[filter,opacity,translate]",
           "not-data-visible:pointer-events-none not-data-visible:opacity-0",
           "not-data-visible:duration-media-controls",
@@ -156,16 +156,18 @@ export function NeutralVideoControls({
       >
         <Tooltip.Provider>
           {/* Left Controls: Play Button & Time Readouts */}
-          <Controls.Group className={"flex items-center rtl:flex-row-reverse gap-3 shrink-0"}>
+          <Controls.Group
+            className={"flex items-center rtl:flex-row-reverse gap-1.5 media-md:gap-3 shrink-0"}
+          >
             <ButtonTooltip side="top">
-              <PlayButton className={"size-10! media-max-5xs:hidden!"} />
+              <PlayButton className={"size-8! media-md:size-10! media-max-5xs:hidden!"} />
             </ButtonTooltip>
 
             {/* High-contrast duration and progress numbers */}
             <Time.Group
               className={cn(
-                "storybook-tabular-nums tabular-nums flex items-center rtl:flex-row-reverse gap-1 font-bold text-xs tracking-normal whitespace-nowrap text-media-muted-foreground",
-                "pe-1 media-max-5xs:hidden!",
+                "storybook-tabular-nums tabular-nums flex items-center rtl:flex-row-reverse gap-1 font-bold text-[11px] media-md:text-xs tracking-normal whitespace-nowrap text-media-muted-foreground",
+                "pe-0.5 media-md:pe-1 media-max-5xs:hidden!",
               )}
             >
               <Time.Value
@@ -177,21 +179,26 @@ export function NeutralVideoControls({
                 type="current"
                 toggle
               />
-              <Time.Separator className={"text-media-muted-foreground font-bold"}>/</Time.Separator>
+              <Time.Separator
+                className={"text-media-muted-foreground font-bold media-max-xs:hidden"}
+              >
+                /
+              </Time.Separator>
               <Time.Value
                 className={
-                  "storybook-tabular-nums tabular-nums text-media-muted-foreground font-bold"
+                  "storybook-tabular-nums tabular-nums text-media-muted-foreground font-bold media-max-xs:hidden"
                 }
                 type="duration"
               />
             </Time.Group>
           </Controls.Group>
 
-          {/* Middle (Top row on compact players): Vine Seek Bar with Ladybug Thumb */}
+          {/* Middle (Top row on compact players >= 448px, hidden below 448px): Vine Seek Bar with Ladybug Thumb */}
           <Controls.Group
             className={cn(
               "@container/video-time-controls flex min-w-0 flex-1 items-center px-2",
               "media-max-xl:order-first media-max-xl:basis-full media-max-xl:px-1",
+              "media-max-md:hidden",
               "[--media-slider-height:--spacing(6)]",
             )}
           >
@@ -200,15 +207,23 @@ export function NeutralVideoControls({
 
           {/* Right Controls: Vertical Volume Popover, CC, Helm Settings, Cast, AirPlay, PiP, Fullscreen */}
           <Controls.Group
-            className={"flex items-center rtl:flex-row-reverse justify-end gap-1 shrink-0"}
+            className={
+              "flex items-center rtl:flex-row-reverse justify-end gap-0.5 media-md:gap-1 shrink-0"
+            }
           >
-            <VolumePopover className={"media-max-5xs:hidden"} side="top" orientation="vertical" />
+            <VolumePopover
+              className={"h-8! w-9! media-md:h-10! media-md:w-11! media-max-5xs:hidden"}
+              side="top"
+              orientation="vertical"
+            />
 
             <ButtonTooltip side="top">
-              <CaptionsButton className={"media-max-sm:hidden"} />
+              <CaptionsButton className={"media-max-md:hidden"} />
             </ButtonTooltip>
 
-            <VideoSettingsMenu className={"media-max-2xs:hidden"} />
+            <VideoSettingsMenu
+              className={"size-8! p-1! media-md:size-10! media-md:p-1.5! media-max-2xs:hidden"}
+            />
 
             <Controls.Group className={"flex items-center rtl:flex-row-reverse gap-1"}>
               <ButtonTooltip side="top">
@@ -221,7 +236,7 @@ export function NeutralVideoControls({
                 <PiPButton className={"media-max-md:hidden"} />
               </ButtonTooltip>
               <ButtonTooltip side="top">
-                <FullscreenButton className={"media-max-4xs:hidden"} />
+                <FullscreenButton className={"size-8! media-md:size-10! media-max-4xs:hidden"} />
               </ButtonTooltip>
             </Controls.Group>
           </Controls.Group>

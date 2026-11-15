@@ -13,7 +13,14 @@ body {
   place-items: center;
   box-sizing: border-box;
   min-height: 100vh;
+  min-height: 100dvh;
   padding: 24px;
+}
+
+@media (max-width: 480px) {
+  .preview-page {
+    padding: 8px;
+  }
 }
 
 .preview-player {

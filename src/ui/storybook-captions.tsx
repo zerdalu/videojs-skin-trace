@@ -8,6 +8,7 @@ import {
   isCaptionTrack,
   readActiveCaptionCues,
   resolveTextTrackList,
+  suppressNativeVideoCaptions,
   type ActiveCaptionCue,
   type CueInlineNode,
 } from "@/lib/captions";
@@ -82,6 +83,7 @@ export function StorybookCaptions({
       return;
     }
     const { media, video } = findMediaElements(containerEl);
+    suppressNativeVideoCaptions(video, media);
     const trackList = resolveTextTrackList(video, media);
     const next = readActiveCaptionCues(trackList);
     setCues((prev) => (cuesEqual(prev, next) ? prev : next));
@@ -121,6 +123,7 @@ export function StorybookCaptions({
 
     const bindMediaListeners = () => {
       const { media, video } = findMediaElements(containerEl);
+      suppressNativeVideoCaptions(video, media);
       const nextTrackList = resolveTextTrackList(video, media);
 
       if (media?.shadowRoot && media.shadowRoot !== boundShadowRoot) {
@@ -184,28 +187,24 @@ export function StorybookCaptions({
     <div
       aria-live="off"
       className={cn(
-        "pointer-events-none absolute inset-x-3 z-20 flex flex-col items-center gap-1.5",
-        "bottom-3 media-md:bottom-5",
-        "in-data-controls-visible:bottom-20 media-md:in-data-controls-visible:bottom-22",
-        "media-max-xl:in-data-controls-visible:bottom-28",
-        "transition-[bottom,opacity,transform] duration-media-controls ease-out",
-        "media-max-5xs:hidden",
+        "storybook-captions-layer pointer-events-none absolute inset-x-2 media-md:inset-x-3 z-20 flex flex-col items-center justify-end gap-1 media-md:gap-1.5 overflow-hidden",
         className,
       )}
     >
-      {cues.map((cue) => (
+      {cues.slice(0, 1).map((cue) => (
         <div
           key={cue.key}
           className={cn(
-            "max-w-[min(90%,42rem)] text-center font-media",
-            "rounded-2xl media-max-sm:rounded-xl px-4 py-1.5 media-max-sm:px-3 media-max-sm:py-1",
-            "border-2 border-(--media-frame-border,#805D35) bg-media-popover/95 text-media-popover-foreground",
-            "shadow-[0_4px_16px_rgba(32,23,14,0.28)] ring-1 ring-inset ring-media-border/45 backdrop-blur-xs",
-            "text-media-lg font-semibold leading-snug tracking-[0.01em]",
-            "media-max-sm:text-media media-max-xs:text-media-sm",
+            "storybook-caption-plaque max-w-[min(90%,42rem)] text-center font-media",
+            "rounded-2xl px-4 py-1.5",
+            "border-2 border-(--media-frame-border,#805D35) text-media-popover-foreground",
+            "shadow-[0_4px_16px_rgba(32,23,14,0.28)] ring-1 ring-inset ring-media-border/45",
+            "text-media media-2xl:text-media-lg font-semibold leading-snug tracking-[0.01em]",
           )}
         >
-          {renderCueNodes(cue.nodes, cue.key)}
+          <span className="block media-max-md:line-clamp-3">
+            {renderCueNodes(cue.nodes, cue.key)}
+          </span>
         </div>
       ))}
     </div>

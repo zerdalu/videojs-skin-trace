@@ -39,7 +39,7 @@ export function StatusIndicator({ className, ...props }: StatusIndicatorProps = 
           "pointer-events-none absolute origin-top",
           "transition-[opacity,translate,filter] duration-media-fast ease-out",
           "media-transitioning:opacity-0 media-transitioning:duration-media-indicator media-transitioning:ease-in",
-          "inset-x-0 top-3 flex justify-center",
+          "inset-x-0 top-1.5 media-md:top-3 flex justify-center",
           "pointer-fine:media-transitioning:blur-media-hidden",
           "data-ending-style:translate-y-media-hidden-indicator-offset",
           "group/input-status",
@@ -50,7 +50,7 @@ export function StatusIndicator({ className, ...props }: StatusIndicatorProps = 
     >
       <div
         className={cn(
-          "flex items-center justify-between gap-2 rounded-xl border-2 border-(--media-frame-border,#805D35) bg-media-popover/95 px-3 py-1 font-bold text-xs text-media-popover-foreground shadow-[0_4px_14px_rgba(80,50,20,0.2)]",
+          "flex items-center justify-between gap-2 rounded-xl border-2 border-(--media-frame-border,#805D35) bg-media-popover/95 px-2.5 py-0.5 media-md:px-3 media-md:py-1 font-bold text-xs text-media-popover-foreground shadow-[0_4px_14px_rgba(80,50,20,0.2)]",
         )}
       >
         <CaptionsOnIconPrimitive
@@ -124,7 +124,7 @@ export function PlaybackStatusIndicator({
       }
       {...props}
     >
-      <div className="grid size-24 place-items-center media-max-sm:size-18 drop-shadow-[0_6px_20px_rgba(32,23,14,0.35)]">
+      <div className="grid size-16 media-md:size-24 place-items-center drop-shadow-[0_6px_20px_rgba(32,23,14,0.35)]">
         <SunflowerPlayIcon
           className={cn(
             "col-start-1 row-start-1 size-full scale-75 opacity-0",
